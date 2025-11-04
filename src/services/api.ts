@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export const API_BASE = 'http://localhost:8000';
+export const API_BASE = 'https://dback-atwi.onrender.com';
 // export const API_BASE = 'https://myfastapiapp.loca.lt';
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
-  timeout: 10000,
+  timeout: 20000,
 });
 
 api.interceptors.request.use((config) => {
