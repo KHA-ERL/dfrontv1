@@ -112,11 +112,11 @@ export const Login: React.FC = () => {
             Sign in
           </Button>
 
-          <div className="mt-4 text-center text-sm text-gray-600">
+          {/* <div className="mt-4 text-center text-sm text-gray-600">
             <p>Demo accounts:</p>
             <p><strong>Admin:</strong> admin@example.com / password</p>
             <p><strong>User:</strong> user@example.com / password</p>
-          </div>
+          </div> */}
         </motion.form>
       </motion.div>
     </div>
