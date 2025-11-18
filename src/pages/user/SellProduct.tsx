@@ -84,7 +84,7 @@ export const SellProduct: React.FC = () => {
         <form onSubmit={onSubmit} className="space-y-4">
           <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
           <Input
-            label="Description"
+            label="Description (Add Defects if any)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />

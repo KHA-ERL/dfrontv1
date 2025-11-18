@@ -10,6 +10,8 @@ import { formatCurrency } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
+const isCompleted = (o: any) => (o.status ?? '').toString() === 'COMPLETED';
+
 const isDelivered = (o: any) => {
   const s = (o.status ?? '').toString();
   return s === 'DELIVERED' || s === 'COMPLETED';
@@ -45,42 +47,34 @@ export const Dashboard: React.FC = () => {
 
       setLoading(true);
       try {
-        // Try to call helpers added to services. If not present, fall back to getOrders('me') or /orders/my
-        // orderService.getMyOrders() is a friendly helper; getOrders('me') is the older variant some files used.
         let orders: any[] = [];
         if (typeof orderService.getMyOrders === 'function') {
           orders = await orderService.getMyOrders();
         } else {
-          // if getOrders takes a truthy param to call /orders/my (some code variants used this)
           try {
             orders = await orderService.getOrders('me');
           } catch {
-            // last resort: call the endpoint directly (works because api wrapper exists)
-            // Note: we don't import api directly here to avoid extra coupling; orderService.getOrders('me') should work.
-            // If it doesn't, add getMyOrders to orderService (see service patch below).
             orders = await orderService.getOrders('me');
           }
         }
 
-        // Fetch products (we will filter to current user's products client-side)
         let products: any[] = [];
         if (typeof productService.getMyProducts === 'function') {
           products = await productService.getMyProducts(String(user.id));
         } else {
-          // fallback: get all products then filter client side by seller id
           products = await productService.getProducts();
         }
 
         if (!mounted) return;
 
-        // Separate purchases (orders where current user is buyer) and sales (where current user is seller)
         const uid = String(user.id);
         const userPurchases = (orders ?? []).filter(o => getOrderBuyerId(o) === uid);
         const userSales = (orders ?? []).filter(o => getOrderSellerId(o) === uid);
 
-        // Normalize products for the current user
         const myProds = (products ?? []).filter((p: any) => {
-          const sid = String(p.sellerId ?? p.seller?.id ?? p.seller_id ?? p.seller_id ?? '');
+          const sid = String(
+            p.sellerId ?? p.seller?.id ?? p.seller_id ?? p.seller_id ?? ''
+          );
           return sid === uid;
         });
 
@@ -100,42 +94,39 @@ export const Dashboard: React.FC = () => {
     };
   }, [user]);
 
-  // ----- BUYING METRICS -----
   const buyingStats = useMemo(() => {
     const totalOrders = purchases.length;
     const activeOrders = purchases.filter(o => !isDelivered(o)).length;
     const completedOrders = purchases.filter(isDelivered).length;
 
-    // === Amount Spent: sum of the prices for all orders made by the current user (buyer)
-    // The user requested "sum of the prices for all orders made by the current user id".
-    // We therefore sum 'price' field on each order. If you prefer to include delivery_fee,
-    // change getOrderPrice to include it.
-    const amountSpent = purchases.reduce((sum, o) => sum + getOrderPrice(o), 0);
+    const amountSpent = purchases.reduce(
+      (sum, o) => sum + getOrderPrice(o),
+      0
+    );
 
     return { totalOrders, activeOrders, completedOrders, amountSpent };
   }, [purchases]);
 
-  // ----- SELLING METRICS -----
   const sellingStats: SellerStats = useMemo(() => {
     const itemsListed = myProducts.length;
 
-    // set of product ids that have been delivered (sales)
     const deliveredProductIds = new Set(
-      (sales ?? []).filter(isDelivered).map(o => getOrderProductId(o))
+      (sales ?? [])
+        .filter(isCompleted)
+        .map(o => getOrderProductId(o))
     );
 
-    // itemsSold: count of delivered *orders* (you may want unique products instead)
-    const itemsSold = (sales ?? []).filter(isDelivered).length;
+    const itemsSold = (sales ?? []).filter(isCompleted).length;
 
-    // active listings: products created by user that are not disabled and not delivered yet
     const activeListings = myProducts.filter(p => {
-  const pid = String(p.id ?? '');
-  const disabled = !!p.is_disabled;
-  return !disabled && !deliveredProductIds.has(pid);
-}).length;
+      const pid = String(p.id ?? '');
+      const disabled = !!p.is_disabled;
+      return !disabled && !deliveredProductIds.has(pid);
+    }).length;
 
-    // revenue: sum price of delivered orders where current user is seller
-    const revenue = (sales ?? []).filter(isDelivered).reduce((sum, o) => sum + getOrderPrice(o), 0);
+    const revenue = (sales ?? [])
+      .filter(isCompleted)
+      .reduce((sum, o) => sum + getOrderPrice(o), 0);
 
     return { itemsListed, itemsSold, activeListings, revenue };
   }, [myProducts, sales]);
@@ -196,7 +187,12 @@ export const Dashboard: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statsConfig[activeMode].map((stat, idx) => (
-          <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+          >
             <Card className="p-6">
               <div className="flex items-center">
                 <div className={`p-3 rounded-lg ${colorMap[stat.color]}`}>
