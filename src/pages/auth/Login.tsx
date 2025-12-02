@@ -55,7 +55,7 @@ export const Login: React.FC = () => {
         <div className="text-center">
           <Link to="/" className="flex justify-center items-center space-x-2">
             <ShoppingBag className="h-12 w-12 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Declutter</span>
+            <span className="text-2xl font-bold text-gray-900">Cribhub</span>
           </Link>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Sign in to your account

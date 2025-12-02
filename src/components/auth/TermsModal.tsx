@@ -22,7 +22,7 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onAccept }) => {
     setLoading(true);
     try {
       await onAccept(); // ✅ calls backend + updates user in context
-      toast.success('Welcome to Declutter!');
+      toast.success('Welcome to Cribhub!');
     } catch (error) {
       toast.error('Something went wrong. Please try again.');
     } finally {
