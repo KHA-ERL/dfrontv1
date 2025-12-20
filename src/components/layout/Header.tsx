@@ -51,6 +51,7 @@ export const Header: React.FC = () => {
     { name: "Women's Fashion", icon: Package, href: '/browse?category=womens-fashion' },
     { name: 'Home And Lifestyle', icon: Package, href: '/browse?category=home-lifestyle' },
     { name: 'Babies And Toys', icon: Package, href: '/browse?category=babies-toys' },
+    { name: 'Plant & Animals', icon: Package, href: '/browse?category=plant-animals' },
     { name: 'Electronics Accessories', icon: Package, href: '/browse?category=electronics-accessories' },
     { name: 'Vehicles & Accessories', icon: Package, href: '/browse?category=vehicles-accessories' },
   ];
