@@ -8,10 +8,12 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Header } from './components/layout/Header';
 import { TermsModal } from './components/auth/TermsModal';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Auth Pages
 import { Login } from './pages/auth/Login';
 import { Signup } from './pages/auth/Signup';
+import { ForgotPassword } from './pages/auth/ForgotPassword';
 
 // Payment Page
 import MockPayment from "./pages/MockPayment";
@@ -60,22 +62,30 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      {user && <Header />}
+      <Header />
       <div className="flex justify-center">
-        <main className={`w-full max-w-7xl ${user ? 'pt-0' : ''}`}>
+        <main className="w-full max-w-7xl pt-0">
           <Routes>
             {/* Public Routes */}
             <Route 
               path="/login" 
               element={user ? <Navigate to="/dashboard" replace /> : <Login />} 
             />
-            <Route 
-              path="/signup" 
-              element={user ? <Navigate to="/dashboard" replace /> : <Signup />} 
+            <Route
+              path="/signup"
+              element={user ? <Navigate to="/dashboard" replace /> : <Signup />}
+            />
+            <Route
+              path="/forgot-password"
+              element={user ? <Navigate to="/dashboard" replace /> : <ForgotPassword />}
             />
 
             {/* 🔹 Mock Payment Route (no protection) */}
             <Route path="/mock/pay/:reference" element={<MockPayment />} />
+
+            {/* Public Browse Routes */}
+            <Route path="/browse" element={<Browse />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
 
             {/* Protected User Routes */}
             <Route
@@ -87,26 +97,10 @@ const AppContent: React.FC = () => {
               }
             />
             <Route
-              path="/browse"
-              element={
-                <ProtectedRoute>
-                  <Browse />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/orders"
               element={
                 <ProtectedRoute>
                   <Orders />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/products/:id"
-              element={
-                <ProtectedRoute>
-                  <ProductDetail />
                 </ProtectedRoute>
               }
             />
@@ -174,12 +168,12 @@ const AppContent: React.FC = () => {
               path="/"
               element={
                 user ? (
-                  <Navigate 
-                    to={user.role === 'admin' ? '/admin' : '/dashboard'} 
-                    replace 
+                  <Navigate
+                    to={user.role === 'admin' ? '/admin' : '/dashboard'}
+                    replace
                   />
                 ) : (
-                  <Navigate to="/login" replace />
+                  <Navigate to="/browse" replace />
                 )
               }
             />
@@ -210,11 +204,13 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

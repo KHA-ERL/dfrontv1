@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+BUG_REPORT.md
+BUGS_FIXED.md
+BUGS_FOUND.md
+CHANGELOG.md
+DEBUG_INSTRUCTIONS.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

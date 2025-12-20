@@ -135,7 +135,7 @@ export const ProductDetail: React.FC = () => {
                   }
                 } catch (err) {
                   console.error("Purchase failed:", err);
-                  alert("Something went wrong while initiating purchase.");
+                  toast.error("Something went wrong while initiating purchase. Please try again.");
                 }
               }}
               className="bg-blue-600 text-white"

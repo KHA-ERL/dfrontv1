@@ -1,6 +1,7 @@
 // frontend/src/pages/MockPayment.tsx
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../services/api";
 
 const MockPayment: React.FC = () => {
@@ -16,15 +17,15 @@ const MockPayment: React.FC = () => {
         const { data } = await api.get(`/payments/verify/${reference}`);
 
         if (data?.ok) {
-          alert("✅ Payment successful and verified!");
+          toast.success("Payment successful and verified!");
         } else {
-          alert("❌ Payment not verified");
+          toast.error("Payment not verified");
         }
 
         navigate("/orders");
       } catch (err) {
         console.error("Payment verification failed:", err);
-        alert("❌ Payment verification failed");
+        toast.error("Payment verification failed. Please contact support.");
         navigate("/orders");
       }
     };

@@ -5,7 +5,7 @@ export const API_BASE = 'https://dback-atwi.onrender.com';
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
-  timeout: 20000,
+  timeout: 60000, // Increased to 60 seconds for slow backend cold-start
 });
 
 api.interceptors.request.use((config) => {

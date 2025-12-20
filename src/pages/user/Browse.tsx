@@ -6,6 +6,7 @@ import { productService } from '../../services/productService';
 import type { Product } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ProductCard } from '../../components/ui/ProductCard';
 import { formatCurrency, formatDate } from '../../utils/validation';
 
 export const Browse: React.FC = () => {
@@ -101,30 +102,15 @@ export const Browse: React.FC = () => {
         ) : products.length === 0 ? (
           <Card className="p-8 text-center text-gray-500">No products found.</Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((p) => (
-              <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                <Card
-                  className="overflow-hidden hover:shadow-lg transition cursor-pointer"
-                  onClick={() => navigate(`/products/${p.id}`)}
-                >
-                  <div className="w-full h-44 bg-gray-100">
-                    <img src={p.images?.[0]} alt={p.name} className="w-full h-44 object-cover" />
-                  </div>
-
-                  <div className="p-4 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900 truncate">{p.name}</h3>
-                      <span className="text-blue-600 font-bold">{formatCurrency(p.price)}</span>
-                    </div>
-
-                    <div className="text-sm text-gray-600">
-                     {p.location_state ? ` ${p.location_state}` : ''}
-                    </div>
-
-                    <div className="text-xs text-gray-500 capitalize">{p.condition}</div>
-                  </div>
-                </Card>
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ProductCard product={p} />
               </motion.div>
             ))}
           </div>

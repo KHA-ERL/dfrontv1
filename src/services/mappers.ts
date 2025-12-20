@@ -46,6 +46,9 @@ export function mapProduct(raw: any) {
     createdAt: raw.created_at,
     isDisabled: raw.is_disabled ?? raw.isDisabled ?? false,
     seller: raw.seller ? mapSeller(raw.seller) : undefined,
+    type: raw.type ?? 'Declutter',
+    quantity: raw.quantity ?? 1,
+    active: raw.active ?? true,
   };
 }
 

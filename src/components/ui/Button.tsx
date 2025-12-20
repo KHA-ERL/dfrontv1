@@ -3,10 +3,11 @@ import { motion } from 'framer-motion';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'success' | 'warning';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
   className?: string;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
@@ -18,26 +19,31 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   disabled = false,
   loading = false,
+  fullWidth = false,
   className = '',
   onClick,
   type = 'button',
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
-  
+  const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
+    primary: 'bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500 shadow-md hover:shadow-lg',
+    secondary: 'bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 focus:ring-gray-500 shadow-md hover:shadow-lg',
+    danger: 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 focus:ring-red-500 shadow-md hover:shadow-lg',
+    success: 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 focus:ring-green-500 shadow-md hover:shadow-lg',
+    warning: 'bg-gradient-to-r from-orange to-orange-dark text-white hover:from-orange-dark hover:to-orange focus:ring-orange shadow-md hover:shadow-lg',
+    outline: 'border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-primary-500',
   };
 
   const sizeClasses = {
-    sm: 'h-8 px-3 text-sm',
-    md: 'h-10 px-4',
+    sm: 'h-9 px-3 text-sm',
+    md: 'h-11 px-5 text-base',
     lg: 'h-12 px-6 text-lg',
   };
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+  const widthClass = fullWidth ? 'w-full' : '';
+
+  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`;
 
   return (
     <motion.button
