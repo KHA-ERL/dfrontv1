@@ -1,4 +1,4 @@
-# Top Commerce - Modern E-Commerce Platform
+# Cribhub - Modern E-Commerce Platform
 
 A full-featured e-commerce platform built with React, TypeScript, Vite, and Tailwind CSS. Allows users to browse products publicly and manage their buying/selling activities after authentication.
 

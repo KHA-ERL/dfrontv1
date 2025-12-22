@@ -117,17 +117,9 @@ export const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
-            <Link to={user ? "/dashboard" : "/browse"} className="flex items-center space-x-3">
-              <div className="relative">
-                <ShoppingCart className="h-10 w-10 text-primary-600" />
-                <div className="absolute -top-1 -right-1 bg-secondary-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                  T
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-primary-600 font-semibold">TOP</div>
-                <div className="text-lg font-bold text-gray-800 -mt-1">COMMERCE</div>
-              </div>
+            <Link to={user ? "/dashboard" : "/browse"} className="flex items-center space-x-2">
+              <ShoppingCart className="h-10 w-10 text-primary-600" />
+              <span className="text-2xl font-bold text-gray-900">Cribhub</span>
             </Link>
 
             {/* Search Bar - Desktop */}
@@ -212,14 +204,14 @@ export const Header: React.FC = () => {
       </header>
 
       {/* Navigation Bar */}
-      <div className="bg-primary-600 text-white">
+      <div className="bg-sky-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hidden md:flex items-center h-12">
             {/* Browse Categories */}
             <div className="relative">
               <button
                 onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
-                className="bg-orange px-6 h-12 flex items-center space-x-2 hover:bg-orange-dark transition-colors"
+                className="bg-white text-sky-600 px-6 h-12 flex items-center space-x-2 hover:bg-gray-200 transition-colors"
               >
                 <Menu size={20} />
                 <span className="font-medium">Browse Categories</span>
@@ -253,29 +245,29 @@ export const Header: React.FC = () => {
 
             {/* Main Navigation */}
             <nav className="flex items-center space-x-8 ml-8">
-              <Link to="/" className="hover:text-orange-light transition-colors">
+              <Link to="/" className="text-white hover:text-gray-300 transition-colors">
                 Home
               </Link>
-              <Link to="/browse" className="hover:text-orange-light transition-colors">
+              <Link to="/browse" className="text-white hover:text-gray-300 transition-colors">
                 Shop
               </Link>
-              <Link to="/sellers" className="hover:text-orange-light transition-colors">
+              <Link to="/sellers" className="text-white hover:text-gray-300 transition-colors">
                 Sellers
               </Link>
-              <Link to="/blog" className="hover:text-orange-light transition-colors">
+              <Link to="/blog" className="text-white hover:text-gray-300 transition-colors">
                 Blog
               </Link>
-              <Link to="/campaign" className="hover:text-orange-light transition-colors">
+              <Link to="/campaign" className="text-white hover:text-gray-300 transition-colors">
                 Campaign
               </Link>
             </nav>
 
             {/* Right Side Links */}
             <div className="ml-auto flex items-center space-x-6">
-              <Link to="/track-order" className="hover:text-orange-light transition-colors">
+              <Link to="/track-order" className="text-white hover:text-gray-300 transition-colors">
                 Track Order
               </Link>
-              <Link to="/flash-deal" className="bg-orange px-4 py-2 rounded hover:bg-orange-dark transition-colors">
+              <Link to="/flash-deal" className="bg-white text-sky-600 px-4 py-2 rounded hover:bg-gray-200 transition-colors font-medium">
                 Flash Deal
               </Link>
             </div>

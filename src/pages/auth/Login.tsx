@@ -102,17 +102,9 @@ export const Login: React.FC = () => {
         >
           {/* Logo */}
           <div className="text-center">
-            <Link to="/" className="inline-flex items-center space-x-3 group">
-              <div className="relative">
-                <ShoppingCart className="h-12 w-12 text-primary-600 group-hover:text-primary-700 transition-colors" />
-                <div className="absolute -top-1 -right-1 bg-secondary-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                  T
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-primary-600 font-semibold">TOP</div>
-                <div className="text-xl font-bold text-gray-800 -mt-1">COMMERCE</div>
-              </div>
+            <Link to="/" className="inline-flex items-center space-x-2 group">
+              <ShoppingCart className="h-12 w-12 text-primary-600 group-hover:text-primary-700 transition-colors" />
+              <span className="text-2xl font-bold text-gray-900">Cribhub</span>
             </Link>
           </div>
 
