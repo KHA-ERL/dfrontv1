@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
 import { TermsModal } from './components/auth/TermsModal';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -18,6 +19,9 @@ import { ForgotPassword } from './pages/auth/ForgotPassword';
 // Payment Page
 import MockPayment from "./pages/MockPayment";
 
+// Public Pages
+import { About } from './pages/About';
+
 // User Pages
 import { Dashboard } from './pages/user/Dashboard';
 import { Browse } from './pages/user/Browse';
@@ -26,6 +30,7 @@ import { ProductDetail } from './pages/user/ProductDetail';
 import { SellProduct } from './pages/user/SellProduct';
 import { MyListings } from './pages/user/MyListings';
 import { MySales } from './pages/user/MySales';
+import { Account } from './pages/user/Account';
 
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -45,7 +50,7 @@ const AppContent: React.FC = () => {
 
   const handleTermsAccept = async () => {
     try {
-      await acceptTerms(); // calls backend + updates context
+      await acceptTerms();
       setShowTermsModal(false);
     } catch (err) {
       console.error("Failed to accept terms", err);
@@ -62,9 +67,9 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <Header />
-      <div className="flex justify-center">
-        <main className="w-full max-w-7xl pt-0">
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <Header />
+        <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
             <Route 
@@ -79,8 +84,9 @@ const AppContent: React.FC = () => {
               path="/forgot-password"
               element={user ? <Navigate to="/dashboard" replace /> : <ForgotPassword />}
             />
+            <Route path="/about" element={<About />} />
 
-            {/* 🔹 Mock Payment Route (no protection) */}
+            {/* Mock Payment Route */}
             <Route path="/mock/pay/:reference" element={<MockPayment />} />
 
             {/* Public Browse Routes */}
@@ -93,6 +99,14 @@ const AppContent: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <Account />
                 </ProtectedRoute>
               }
             />
@@ -163,22 +177,13 @@ const AppContent: React.FC = () => {
               }
             />
 
-            {/* Default redirect */}
             <Route
               path="/"
-              element={
-                user ? (
-                  <Navigate
-                    to={user.role === 'admin' ? '/admin' : '/dashboard'}
-                    replace
-                  />
-                ) : (
-                  <Navigate to="/browse" replace />
-                )
-              }
+              element={<Navigate to={user ? "/dashboard" : "/browse"} replace />}
             />
           </Routes>
         </main>
+        <Footer />
       </div>
 
       <TermsModal

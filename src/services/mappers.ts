@@ -5,6 +5,24 @@ function normalizeUrl(url: string): string {
   return url.startsWith('/uploads') ? `${API_BASE}${url}` : url;
 }
 
+export function mapUser(raw: any) {
+  if (!raw) return undefined;
+  
+  return {
+    id: String(raw.id),
+    email: raw.email ?? '',
+    fullName: raw.full_name ?? raw.fullName ?? '',
+    whatsapp: raw.whatsapp ?? '',
+    houseAddress: raw.house_address ?? raw.houseAddress ?? '',
+    substituteAddress: raw.substitute_address ?? raw.substituteAddress ?? '',
+    bankAccount: raw.bankAccountNumber ?? raw.bank_account_number ?? raw.bankAccount ?? '',
+    bankName: raw.bankName ?? raw.bank_name ?? '',
+    role: raw.role === 'admin' ? 'admin' : 'regular',
+    createdAt: raw.created_at ?? raw.createdAt ?? new Date().toISOString(),
+    hasAcceptedTerms: !!(raw.acceptedTermsAt ?? raw.accepted_terms_at),
+  };
+}
+
 export function mapUserPublic(raw: any) {
   if (!raw) return undefined;
   const fullName = raw.full_name ?? raw.fullName ?? '';
@@ -19,17 +37,14 @@ export function mapUserPublic(raw: any) {
   };
 }
 
-
 export function mapSeller(raw: any) {
   return mapUserPublic(raw);
 }
 
 export function mapProduct(raw: any) {
   if (!raw) return undefined;
-
   const images = (raw.images || []).map((u: string) => normalizeUrl(u));
   const videos = (raw.videos || []).map((u: string) => normalizeUrl(u));
-
   return {
     id: raw.id,
     name: raw.name,
@@ -54,12 +69,10 @@ export function mapProduct(raw: any) {
 
 export function mapOrder(raw: any) {
   if (!raw) return undefined;
-
   const product = raw.product ? mapProduct(raw.product) : undefined;
   const buyer = raw.buyer ? mapUserPublic(raw.buyer) : undefined;
   const seller = raw.seller ? mapUserPublic(raw.seller) : undefined;
 
-  // derive satisfaction state properly
   const satisfactionStatusRaw =
     raw.satisfaction_status ??
     raw.satisfactionStatus ??
@@ -68,7 +81,6 @@ export function mapOrder(raw: any) {
       : raw.status === 'DELIVERED'
       ? 'NOT_SATISFIED'
       : 'PENDING');
-
   const satisfactionStatus = String(satisfactionStatusRaw).toUpperCase();
 
   const price = raw.price ?? 0;
@@ -84,17 +96,13 @@ export function mapOrder(raw: any) {
     product,
     buyer,
     seller,
-
     price,
     deliveryFee,
     totalAmount,
-
     status: (raw.status ?? '').toUpperCase(),
     satisfied: !!raw.satisfied,
-
     createdAt: raw.created_at,
     deliveredAt: raw.received_at,
-
     satisfactionStatus,
   };
 }
