@@ -83,11 +83,18 @@ export const SellProduct: React.FC = () => {
         <h2 className="text-xl font-bold mb-4">List a new item</h2>
         <form onSubmit={onSubmit} className="space-y-4">
           <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <Input
-            label="Description (Add Defects if any)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Description (Add Defects if any)
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Describe your item, including any defects..."
+            />
+          </div>
           <Input
             label="Price (NGN)"
             type="number"

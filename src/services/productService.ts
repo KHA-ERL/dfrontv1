@@ -20,7 +20,9 @@ export const productService = {
 
   async getProduct(id: string): Promise<Product> {
     const resp = await api.get(`/products/${id}`);
-    return _mapProduct(resp.data);
+    const mapped = _mapProduct(resp.data);
+    if (!mapped) throw new Error('Product not found');
+    return mapped;
   },
 
   async purchaseProduct(productId: string): Promise<{
@@ -57,6 +59,15 @@ export const productService = {
     const resp = await api.post('/products', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    return _mapProduct(resp.data);
+    const mapped = _mapProduct(resp.data);
+    if (!mapped) throw new Error('Failed to create product');
+    return mapped;
+  },
+
+  async updateProduct(productId: string, data: { price?: number; [key: string]: any }): Promise<Product> {
+    const resp = await api.put(`/products/${productId}`, data);
+    const mapped = _mapProduct(resp.data);
+    if (!mapped) throw new Error('Failed to update product');
+    return mapped;
   },
 };

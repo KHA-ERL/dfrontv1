@@ -7,6 +7,7 @@ import { formatCurrency } from '../../utils/validation';
 import type { Product } from '../../types';
 import { Button } from '../../components/ui/Button';
 import { X } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,14 +48,22 @@ export const ProductDetail: React.FC = () => {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Lightbox */}
       {lightbox && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 transition-opacity duration-500"
+          onClick={() => setLightbox(null)}
+        >
           <button
-            className="absolute top-4 right-4 text-white"
+            className="absolute top-4 right-4 bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg transition-colors"
             onClick={() => setLightbox(null)}
           >
             <X size={28} />
           </button>
-          <img src={lightbox} alt="preview" className="max-h-[90vh] rounded-lg" />
+          <img
+            src={lightbox}
+            alt="preview"
+            className="max-h-[90vh] rounded-lg transition-transform duration-500 ease-in-out"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
 
@@ -121,21 +130,31 @@ export const ProductDetail: React.FC = () => {
             <Button
               onClick={async () => {
                 try {
+                  toast.info("Initiating payment...");
                   const res = await productService.purchaseProduct(String(product.id));
 
+                  console.log("Payment initialization response:", res);
+
                   if (res.authorization_url) {
-                    
+                    // Redirect to payment gateway
+                    toast.success("Redirecting to payment gateway...");
                     window.location.href = res.authorization_url;
                   } else if (res.success && res.orderId) {
-                    
+                    // Direct order creation (no payment gateway)
+                    toast.success("Order created successfully!");
                     navigate(`/orders/${res.orderId}`);
                   } else {
-                    
+                    // Fallback: go to orders page
+                    toast.warning("Payment initiated. Check your orders page.");
                     navigate(`/orders`);
                   }
-                } catch (err) {
+                } catch (err: any) {
                   console.error("Purchase failed:", err);
-                  toast.error("Something went wrong while initiating purchase. Please try again.");
+                  const errorMessage = err.response?.data?.detail ||
+                                     err.response?.data?.message ||
+                                     err.message ||
+                                     "Something went wrong while initiating purchase. Please try again.";
+                  toast.error(errorMessage);
                 }
               }}
               className="bg-blue-600 text-white"
@@ -153,12 +172,12 @@ export const ProductDetail: React.FC = () => {
         <div className="flex items-center space-x-3">
           <img
             src={'/default-avatar.png'}
-            alt={product.seller?.full_name || 'Seller'}
+            alt={product.seller?.fullName || 'Seller'}
             className="w-12 h-12 rounded-full object-cover"
           />
           <div>
             <div className="font-medium">
-              {product.seller?.full_name || 'Unknown Seller'}
+              {product.seller?.fullName || 'Unknown Seller'}
             </div>
             <div className="text-sm text-gray-500">{product.seller?.email}</div>
             {product.seller?.whatsapp && (

@@ -208,10 +208,10 @@ export const Header: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
-                className="flex items-center space-x-2 px-4 py-2 bg-sky-600 text-white hover:bg-sky-700 rounded transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-sky-700 text-white hover:bg-sky-800 rounded transition-colors"
               >
                 <Menu size={20} />
-                <span>All Categories</span>
+                <span className="text-white">All Categories</span>
                 <ChevronDown size={16} />
               </button>
 
@@ -247,15 +247,15 @@ export const Header: React.FC = () => {
 
             {/* Quick Links */}
             <nav className="flex items-center space-x-6 ml-8">
-              <Link to="/browse" className="hover:text-gray-200 transition-colors">
+              <Link to="/browse" className="text-white hover:text-gray-200 transition-colors">
                 Browse
               </Link>
               {user && (
-                <Link to="/sell/new" className="hover:text-gray-200 transition-colors">
+                <Link to="/sell/new" className="text-white hover:text-gray-200 transition-colors">
                   Sell
                 </Link>
               )}
-              <Link to="/about" className="hover:text-gray-200 transition-colors">
+              <Link to="/about" className="text-white hover:text-gray-200 transition-colors">
                 About
               </Link>
             </nav>
