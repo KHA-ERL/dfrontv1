@@ -17,6 +17,7 @@ BUGS_FIXED.md
 BUGS_FOUND.md
 CHANGELOG.md
 DEBUG_INSTRUCTIONS.md
+deploy.sh
 
 # Editor directories and files
 .vscode/*

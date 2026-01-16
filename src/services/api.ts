@@ -23,8 +23,17 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Don't automatically redirect - let components handle auth errors
-    // This prevents false logouts when optional API calls fail
+    // Handle 401 Unauthorized errors
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      const token = localStorage.getItem('token');
+      if (token) {
+        console.warn('Received 401 error - token may be expired or invalid');
+        localStorage.removeItem('token');
+        // Reload the page to reset auth state
+        window.location.href = '/login?expired=true';
+      }
+    }
     return Promise.reject(error);
   }
 );

@@ -32,7 +32,8 @@ export const productService = {
     reference?: string;
   }> {
     // call the backend to create order + initialize paystack transaction
-    const resp = await api.post('/payments/initialize', { product_id: productId });
+    // Backend expects productId as an integer
+    const resp = await api.post('/payments/initialize', { productId: parseInt(productId, 10) });
     // backend returns authorization_url and reference and orderId
     const data = resp.data ?? {};
     const d = data;

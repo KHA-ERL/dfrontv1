@@ -22,6 +22,14 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check if user was redirected due to token expiration
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('expired') === 'true') {
+      toast.warning('Your session has expired. Please log in again.');
+    }
+  }, [location]);
+
   const {
     register,
     handleSubmit,

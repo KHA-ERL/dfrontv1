@@ -150,11 +150,23 @@ export const ProductDetail: React.FC = () => {
                   }
                 } catch (err: any) {
                   console.error("Purchase failed:", err);
-                  const errorMessage = err.response?.data?.detail ||
-                                     err.response?.data?.message ||
+                  console.error("Error response:", err.response?.data);
+
+                  // Extract error message from various possible formats
+                  let errorMessage = err.response?.data?.detail ||
+                                     err.response?.data?.error ||
+                                     (typeof err.response?.data === 'string' ? err.response.data : null) ||
                                      err.message ||
                                      "Something went wrong while initiating purchase. Please try again.";
-                  toast.error(errorMessage);
+
+                  // Handle array of messages
+                  if (Array.isArray(err.response?.data?.message)) {
+                    errorMessage = err.response.data.message.join('. ');
+                  } else if (err.response?.data?.message) {
+                    errorMessage = err.response.data.message;
+                  }
+
+                  toast.error(errorMessage, { autoClose: 8000 });
                 }
               }}
               className="bg-blue-600 text-white"
