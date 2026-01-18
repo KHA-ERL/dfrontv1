@@ -8,13 +8,21 @@ import type { Product } from '../../types';
 import { Button } from '../../components/ui/Button';
 import { X } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
+
+  // Check if current user is the seller of this product
+  const isOwnProduct = user && product && (
+    String(product.sellerId) === String(user.id) ||
+    String(product.seller?.id) === String(user.id)
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -127,53 +135,65 @@ export const ProductDetail: React.FC = () => {
 
           <div className="mt-6 space-x-2">
             <Button onClick={() => navigate(-1)}>Back</Button>
-            <Button
-              onClick={async () => {
-                try {
-                  toast.info("Initiating payment...");
-                  const res = await productService.purchaseProduct(String(product.id));
-
-                  console.log("Payment initialization response:", res);
-
-                  if (res.authorization_url) {
-                    // Redirect to payment gateway
-                    toast.success("Redirecting to payment gateway...");
-                    window.location.href = res.authorization_url;
-                  } else if (res.success && res.orderId) {
-                    // Direct order creation (no payment gateway)
-                    toast.success("Order created successfully!");
-                    navigate(`/orders/${res.orderId}`);
-                  } else {
-                    // Fallback: go to orders page
-                    toast.warning("Payment initiated. Check your orders page.");
-                    navigate(`/orders`);
-                  }
-                } catch (err: any) {
-                  console.error("Purchase failed:", err);
-                  console.error("Error response:", err.response?.data);
-
-                  // Extract error message from various possible formats
-                  let errorMessage = err.response?.data?.detail ||
-                                     err.response?.data?.error ||
-                                     (typeof err.response?.data === 'string' ? err.response.data : null) ||
-                                     err.message ||
-                                     "Something went wrong while initiating purchase. Please try again.";
-
-                  // Handle array of messages
-                  if (Array.isArray(err.response?.data?.message)) {
-                    errorMessage = err.response.data.message.join('. ');
-                  } else if (err.response?.data?.message) {
-                    errorMessage = err.response.data.message;
+            {isOwnProduct ? (
+              <span className="inline-block px-4 py-2 bg-gray-400 text-white rounded-md cursor-not-allowed">
+                Your Product
+              </span>
+            ) : (
+              <Button
+                onClick={async () => {
+                  // Check if user is logged in
+                  if (!user) {
+                    toast.warning("Please log in to make a purchase");
+                    navigate('/login', { state: { from: { pathname: `/products/${product.id}` } } });
+                    return;
                   }
 
-                  toast.error(errorMessage, { autoClose: 8000 });
-                }
-              }}
-              className="bg-blue-600 text-white"
-            >
-              Buy Now
-            </Button>
+                  try {
+                    toast.info("Initiating payment...");
+                    const res = await productService.purchaseProduct(String(product.id));
 
+                    console.log("Payment initialization response:", res);
+
+                    if (res.authorization_url) {
+                      // Redirect to payment gateway
+                      toast.success("Redirecting to payment gateway...");
+                      window.location.href = res.authorization_url;
+                    } else if (res.success && res.orderId) {
+                      // Direct order creation (no payment gateway)
+                      toast.success("Order created successfully!");
+                      navigate(`/orders/${res.orderId}`);
+                    } else {
+                      // Fallback: go to orders page
+                      toast.warning("Payment initiated. Check your orders page.");
+                      navigate(`/orders`);
+                    }
+                  } catch (err: any) {
+                    console.error("Purchase failed:", err);
+                    console.error("Error response:", err.response?.data);
+
+                    // Extract error message from various possible formats
+                    let errorMessage = err.response?.data?.detail ||
+                                       err.response?.data?.error ||
+                                       (typeof err.response?.data === 'string' ? err.response.data : null) ||
+                                       err.message ||
+                                       "Something went wrong while initiating purchase. Please try again.";
+
+                    // Handle array of messages
+                    if (Array.isArray(err.response?.data?.message)) {
+                      errorMessage = err.response.data.message.join('. ');
+                    } else if (err.response?.data?.message) {
+                      errorMessage = err.response.data.message;
+                    }
+
+                    toast.error(errorMessage, { autoClose: 8000 });
+                  }
+                }}
+                className="bg-blue-600 text-white"
+              >
+                Buy Now
+              </Button>
+            )}
           </div>
         </div>
       </div>

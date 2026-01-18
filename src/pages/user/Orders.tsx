@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Package, Clock, CheckCircle, AlertCircle, Eye, MessageSquare } from 'lucide-react';
+import { Package, Clock, CheckCircle, AlertCircle, Eye, MessageSquare, CreditCard } from 'lucide-react';
 import type { Order } from '../../types';
 import { orderService } from '../../services/orderService';
+import { productService } from '../../services/productService';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
@@ -268,6 +269,38 @@ export const Orders: React.FC = () => {
                       {/* Buyer actions */}
                       {activeTab === 'buying' && (
                         <>
+                          {/* Pay Now button for pending orders */}
+                          {order.status?.toUpperCase() === 'PENDING' && order.productId && (
+                            <Button
+                              size="sm"
+                              className="bg-orange-600 text-white hover:bg-orange-700"
+                              onClick={async () => {
+                                try {
+                                  // Check if product is still available
+                                  const product = await productService.getProduct(String(order.productId));
+                                  if (!product || product.isDisabled || !product.active) {
+                                    toast.error('This product is no longer available for purchase');
+                                    return;
+                                  }
+
+                                  toast.info('Redirecting to payment...');
+                                  const res = await productService.purchaseProduct(String(order.productId));
+                                  if (res.authorization_url) {
+                                    window.location.href = res.authorization_url;
+                                  } else {
+                                    toast.error('Unable to initialize payment. Please try again.');
+                                  }
+                                } catch (err: any) {
+                                  console.error('Payment failed:', err);
+                                  const errorMessage = err.response?.data?.message || err.message || 'Payment failed';
+                                  toast.error(Array.isArray(errorMessage) ? errorMessage.join('. ') : errorMessage);
+                                }
+                              }}
+                            >
+                              <CreditCard size={14} className="mr-1" />
+                              Pay Now
+                            </Button>
+                          )}
                           {order.status?.toUpperCase() === 'SHIPPED' && (
                             <Button
                               size="sm"
@@ -377,25 +410,49 @@ export const Orders: React.FC = () => {
                   <div className="space-y-1 text-sm">
                     {activeTab === "buying" ? (
                       <>
-                        <p><span className="text-gray-500">Name:</span> {selectedOrder.seller.fullName}</p>
-                        <p><span className="text-gray-500">Email:</span> {selectedOrder.seller.email}</p>
-                        <p><span className="text-gray-500">WhatsApp:</span> {selectedOrder.seller.whatsapp}</p>
+                        <p><span className="text-gray-500">Name:</span> {selectedOrder.seller?.fullName || 'N/A'}</p>
+                        <p><span className="text-gray-500">Email:</span> {selectedOrder.seller?.email || 'N/A'}</p>
+
+                        {/* Show WhatsApp and address only after payment */}
+                        {['PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'COMPLETED'].includes(selectedOrder.status?.toUpperCase()) ? (
+                          <>
+                            <p><span className="text-gray-500">WhatsApp:</span> {selectedOrder.seller?.whatsapp || 'Not provided'}</p>
+
+                            <div className="mt-3 border-t pt-2">
+                              <p className="text-gray-500 font-medium mb-1">Seller Address</p>
+                              <p>
+                                <strong>Primary:</strong>{' '}
+                                {selectedOrder.seller?.houseAddress || 'Not provided'}
+                              </p>
+                              <p>
+                                <strong>Alternate:</strong>{' '}
+                                {selectedOrder.seller?.substituteAddress || 'Not provided'}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                            <p className="text-yellow-700 text-sm">
+                              <strong>Note:</strong> Seller's contact details and address will be visible after payment is completed.
+                            </p>
+                          </div>
+                        )}
                       </>
                     ) : (
                       <>
-                        <p><span className="text-gray-500">Name:</span> {selectedOrder.buyer.fullName}</p>
-                        <p><span className="text-gray-500">Email:</span> {selectedOrder.buyer.email}</p>
-                        <p><span className="text-gray-500">WhatsApp:</span> {selectedOrder.buyer.whatsapp}</p>
+                        <p><span className="text-gray-500">Name:</span> {selectedOrder.buyer?.fullName || 'N/A'}</p>
+                        <p><span className="text-gray-500">Email:</span> {selectedOrder.buyer?.email || 'N/A'}</p>
+                        <p><span className="text-gray-500">WhatsApp:</span> {selectedOrder.buyer?.whatsapp || 'Not provided'}</p>
 
                         <div className="mt-3 border-t pt-2">
                           <p className="text-gray-500 font-medium mb-1">Delivery Address</p>
                           <p>
                             <strong>Primary:</strong>{' '}
-                            {selectedOrder.buyer.houseAddress || 'Not provided'}
+                            {selectedOrder.buyer?.houseAddress || 'Not provided'}
                           </p>
                           <p>
                             <strong>Alternate:</strong>{' '}
-                            {selectedOrder.buyer.substituteAddress || 'Not provided'}
+                            {selectedOrder.buyer?.substituteAddress || 'Not provided'}
                           </p>
                         </div>
                       </>

@@ -33,13 +33,18 @@ export const productService = {
   }> {
     // call the backend to create order + initialize paystack transaction
     // Backend expects productId as an integer
-    const resp = await api.post('/payments/initialize', { productId: parseInt(productId, 10) });
+    // Pass callback URL so Paystack redirects back after payment
+    const callbackUrl = `${window.location.origin}/payment/callback`;
+    const resp = await api.post('/payments/initialize', {
+      productId: parseInt(productId, 10),
+      callbackUrl
+    });
     // backend returns authorization_url and reference and orderId
     const data = resp.data ?? {};
     const d = data;
     return {
       success: d.ok ?? false,
-      orderId: d.orderId,
+      orderId: d.orderId ?? d.order_id,
       authorization_url: d.authorization_url ?? d.authorizationUrl ?? d.raw?.data?.authorization_url,
       reference: d.reference ?? d.raw?.data?.reference,
     };

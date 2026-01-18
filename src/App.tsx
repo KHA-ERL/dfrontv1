@@ -16,8 +16,9 @@ import { Login } from './pages/auth/Login';
 import { Signup } from './pages/auth/Signup';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
 
-// Payment Page
+// Payment Pages
 import MockPayment from "./pages/MockPayment";
+import { PaymentCallback } from "./pages/PaymentCallback";
 
 // Public Pages
 import { About } from './pages/About';
@@ -86,8 +87,9 @@ const AppContent: React.FC = () => {
             />
             <Route path="/about" element={<About />} />
 
-            {/* Mock Payment Route */}
+            {/* Payment Routes */}
             <Route path="/mock/pay/:reference" element={<MockPayment />} />
+            <Route path="/payment/callback" element={<PaymentCallback />} />
 
             {/* Public Browse Routes */}
             <Route path="/browse" element={<Browse />} />

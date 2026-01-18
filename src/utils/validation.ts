@@ -38,8 +38,11 @@ export const formatDate = (dateString: string): string => {
   });
 };
 
-export const formatDateTime = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('en-US', {
+export const formatDateTime = (dateString: string | null | undefined): string => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'N/A';
+  return date.toLocaleString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

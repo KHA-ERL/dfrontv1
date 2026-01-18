@@ -101,8 +101,8 @@ export function mapOrder(raw: any) {
     totalAmount,
     status: (raw.status ?? '').toUpperCase(),
     satisfied: !!raw.satisfied,
-    createdAt: raw.created_at,
-    deliveredAt: raw.received_at,
+    createdAt: raw.created_at ?? raw.createdAt ?? null,
+    deliveredAt: raw.received_at ?? raw.receivedAt ?? null,
     satisfactionStatus,
   };
 }

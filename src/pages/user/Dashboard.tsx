@@ -17,6 +17,12 @@ const isDelivered = (o: any) => {
   return s === 'DELIVERED' || s === 'COMPLETED';
 };
 
+// Check if order is successful (PAID, PROCESSING, SHIPPED, DELIVERED, or COMPLETED)
+const isSuccessfulOrder = (o: any) => {
+  const s = (o.status ?? '').toString().toUpperCase();
+  return ['PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'COMPLETED'].includes(s);
+};
+
 const getOrderBuyerId = (o: any) => String(o.buyerId ?? o.buyer?.id ?? o.buyer_id ?? '');
 const getOrderSellerId = (o: any) => String(o.sellerId ?? o.seller?.id ?? o.seller_id ?? '');
 const getOrderProductId = (o: any) => String(o.productId ?? o.product?.id ?? o.product_id ?? '');
@@ -95,11 +101,14 @@ export const Dashboard: React.FC = () => {
   }, [user]);
 
   const buyingStats = useMemo(() => {
-    const totalOrders = purchases.length;
-    const activeOrders = purchases.filter(o => !isDelivered(o)).length;
-    const completedOrders = purchases.filter(isDelivered).length;
+    // Only count successful orders (exclude PENDING and CANCELLED)
+    const successfulOrders = purchases.filter(isSuccessfulOrder);
+    const totalOrders = successfulOrders.length;
+    const activeOrders = successfulOrders.filter(o => !isDelivered(o)).length;
+    const completedOrders = successfulOrders.filter(isDelivered).length;
 
-    const amountSpent = purchases.reduce(
+    // Only sum amount for successful orders
+    const amountSpent = successfulOrders.reduce(
       (sum, o) => sum + getOrderPrice(o),
       0
     );
@@ -120,7 +129,7 @@ export const Dashboard: React.FC = () => {
 
     const activeListings = myProducts.filter(p => {
       const pid = String(p.id ?? '');
-      const disabled = !!p.is_disabled;
+      const disabled = !!p.isDisabled;
       return !disabled && !deliveredProductIds.has(pid);
     }).length;
 
