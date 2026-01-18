@@ -33,8 +33,11 @@ export const Orders: React.FC = () => {
     setLoading(true);
     try {
       const data = await orderService.getOrders(user.id);
+      const userId = String(user.id);
       const filteredOrders = data.filter(order =>
-        activeTab === 'buying' ? order.buyerId === user.id : order.sellerId === user.id
+        activeTab === 'buying'
+          ? String(order.buyerId) === userId
+          : String(order.sellerId) === userId
       );
       setOrders(filteredOrders);
     } catch (error) {
