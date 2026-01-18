@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { formatCurrency } from '../../utils/validation';
 import type { Product } from '../../types';
 import { Button } from '../../components/ui/Button';
-import { X } from 'lucide-react';
+import { X, Star } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -126,8 +126,27 @@ export const ProductDetail: React.FC = () => {
           )}
 
           <div className="text-sm text-gray-600 mt-2">
-            {product.condition} • {product.location_state}
+            {product.condition === 'new' ? 'Pristine/Flawless' :
+             product.condition === 'used' ? 'Pre-owned' :
+             product.condition} • {product.location_state}
           </div>
+
+          {/* Condition Rating */}
+          {product.conditionRating !== null && product.conditionRating !== undefined && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Star size={18} className="fill-yellow-400 text-yellow-400" />
+                <span className="font-semibold text-gray-800">
+                  Seller's Condition Rating: {product.conditionRating}/10
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {product.conditionRating >= 8 ? 'Excellent condition' :
+                 product.conditionRating >= 5 ? 'Good condition' :
+                 'Fair condition - check description for details'}
+              </p>
+            </div>
+          )}
 
           <div className="mt-6 text-gray-700 whitespace-pre-line">
             {product.description}

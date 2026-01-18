@@ -12,6 +12,7 @@ export const SellProduct: React.FC = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState<number | ''>('');
   const [condition, setCondition] = useState('used');
+  const [conditionRating, setConditionRating] = useState<number>(7);
   const [locationState, setLocationState] = useState('');
   const [deliveryFee, setDeliveryFee] = useState<number | ''>('');
 
@@ -52,6 +53,7 @@ export const SellProduct: React.FC = () => {
     fd.append('description', description);
     fd.append('price', String(price));
     fd.append('condition', condition);
+    fd.append('conditionRating', String(conditionRating));
     fd.append('location_state', locationState);
     fd.append('delivery_fee', String(deliveryFee || 0));
 
@@ -64,7 +66,7 @@ export const SellProduct: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await api.post('/products', fd, {
+      await api.post('/products', fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Product listed successfully!');
@@ -134,10 +136,37 @@ export const SellProduct: React.FC = () => {
               onChange={(e) => setCondition(e.target.value)}
               className="mt-1 w-full border px-3 py-2 rounded"
             >
-              <option value="new">New</option>
-              <option value="used">Used</option>
+              <option value="new">Pristine/Flawless (New)</option>
+              <option value="used">Pre-owned (Used)</option>
               <option value="refurbished">Refurbished</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Condition Rating (0-10)
+            </label>
+            <p className="text-xs text-gray-500 mb-2">
+              Rate the condition of your item: 0 = Poor, 5 = Fair, 10 = Perfect
+            </p>
+            <div className="flex items-center gap-3">
+              <input
+                type="range"
+                min="0"
+                max="10"
+                value={conditionRating}
+                onChange={(e) => setConditionRating(Number(e.target.value))}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <span className="w-12 text-center font-bold text-lg text-blue-600">
+                {conditionRating}/10
+              </span>
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <span>Poor</span>
+              <span>Fair</span>
+              <span>Perfect</span>
+            </div>
           </div>
 
           <Input

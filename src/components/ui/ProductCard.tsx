@@ -19,8 +19,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showWishlist 
 
   // Get the first image or use placeholder
   const imageUrl = product.images?.[0] || '/placeholder-product.jpg';
-  const rating = 4.5; // This would come from product data in real scenario
-  const reviewCount = 128; // This would come from product data
+
+  // Map condition to display label
+  const getConditionLabel = (condition: string) => {
+    switch (condition?.toLowerCase()) {
+      case 'new': return 'Pristine';
+      case 'used': return 'Pre-owned';
+      case 'refurbished': return 'Refurbished';
+      default: return condition;
+    }
+  };
 
   return (
     <Link to={`/products/${product.id}`}>
@@ -43,11 +51,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showWishlist 
               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                 product.condition.toLowerCase() === 'new'
                   ? 'bg-green-500 text-white'
-                  : product.condition.toLowerCase() === 'like new'
+                  : product.condition.toLowerCase() === 'refurbished'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-orange text-white'
+                  : 'bg-orange-500 text-white'
               }`}>
-                {product.condition}
+                {getConditionLabel(product.condition)}
               </span>
             )}
           </div>
@@ -78,14 +86,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showWishlist 
             {product.name}
           </h3>
 
-          {/* Rating */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center gap-1">
-              <Star size={14} className="fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium text-gray-700">{rating}</span>
+          {/* Condition Rating */}
+          {product.conditionRating !== null && product.conditionRating !== undefined && (
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1">
+                <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium text-gray-700">{product.conditionRating}/10</span>
+              </div>
+              <span className="text-xs text-gray-500">condition</span>
             </div>
-            <span className="text-xs text-gray-500">({reviewCount})</span>
-          </div>
+          )}
 
           {/* Location */}
           {product.locationState && (
@@ -101,9 +111,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showWishlist 
               <div className="text-xl font-bold text-primary-600">
                 ₦{product.price.toLocaleString()}
               </div>
-              {product.deliveryFee > 0 && (
+              {(product.deliveryFee ?? 0) > 0 && (
                 <div className="text-xs text-gray-500">
-                  +₦{product.deliveryFee.toLocaleString()} delivery
+                  +₦{(product.deliveryFee ?? 0).toLocaleString()} delivery
                 </div>
               )}
             </div>

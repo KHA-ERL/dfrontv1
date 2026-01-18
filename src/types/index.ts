@@ -25,14 +25,18 @@ export interface Product {
   description?: string;
   price: number;
   condition?: string;
+  conditionRating?: number; // 0-10 seller rating
   images: string[];
   videos?: string[];
   location_state?: string;
+  locationState?: string;
   delivery_fee?: number;
+  deliveryFee?: number;
   sellerId?: number;
   seller?: UserPublic;
   createdAt?: string;
   isDisabled?: boolean;
+  outOfStock?: boolean; // For Online Store items
   type: 'Declutter' | 'Online Store';
   quantity: number;
   active: boolean;

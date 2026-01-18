@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { productService } from '../../services/productService';
@@ -7,10 +6,8 @@ import type { Product } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ProductCard } from '../../components/ui/ProductCard';
-import { formatCurrency, formatDate } from '../../utils/validation';
 
 export const Browse: React.FC = () => {
-  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,8 +72,8 @@ export const Browse: React.FC = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All conditions</option>
-              <option value="new">New</option>
-              <option value="used">Used</option>
+              <option value="new">Pristine/Flawless</option>
+              <option value="used">Pre-owned</option>
               <option value="refurbished">Refurbished</option>
             </select>
 

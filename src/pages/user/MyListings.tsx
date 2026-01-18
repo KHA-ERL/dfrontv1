@@ -4,7 +4,7 @@ import type { Product } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { formatCurrency } from '../../utils/validation';
 import { useAuth } from '../../contexts/AuthContext';
-import { Edit2, Check, X } from 'lucide-react';
+import { Edit2, Check, X, Package, PackageX } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 export const MyListings: React.FC = () => {
@@ -51,6 +51,21 @@ export const MyListings: React.FC = () => {
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditPrice(0);
+  };
+
+  const handleToggleOutOfStock = async (product: Product) => {
+    setLoading(true);
+    try {
+      const newStatus = !product.outOfStock;
+      await productService.updateProduct(String(product.id), { outOfStock: newStatus });
+      toast.success(newStatus ? 'Product marked as out of stock' : 'Product marked as in stock');
+      loadProducts();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.detail || 'Failed to update stock status');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,6 +123,48 @@ export const MyListings: React.FC = () => {
             )}
 
             <div className="text-sm text-gray-500 mt-1">{p.location_state}</div>
+
+            {/* Product Type Badge */}
+            <div className="mt-2 flex items-center justify-between">
+              <span className={`text-xs px-2 py-1 rounded ${
+                p.type === 'Online Store'
+                  ? 'bg-purple-100 text-purple-700'
+                  : 'bg-blue-100 text-blue-700'
+              }`}>
+                {p.type || 'Declutter'}
+              </span>
+
+              {p.type === 'Online Store' && (
+                <span className="text-xs text-gray-500">
+                  Qty: {p.quantity ?? 1}
+                </span>
+              )}
+            </div>
+
+            {/* Out of Stock Toggle for Online Store items */}
+            {p.type === 'Online Store' && (
+              <button
+                onClick={() => handleToggleOutOfStock(p)}
+                disabled={loading}
+                className={`mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
+                  p.outOfStock
+                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                } disabled:opacity-50`}
+              >
+                {p.outOfStock ? (
+                  <>
+                    <PackageX size={16} />
+                    Out of Stock - Click to Restock
+                  </>
+                ) : (
+                  <>
+                    <Package size={16} />
+                    In Stock - Click to Mark Out
+                  </>
+                )}
+              </button>
+            )}
           </Card>
         ))}
         {products.length === 0 && <p>No listings yet.</p>}
