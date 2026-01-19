@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Star, Heart } from 'lucide-react';
 import type { Product } from '../../types';
 import { motion } from 'framer-motion';
+import { useWishlist } from '../../contexts/WishlistContext';
 
 interface ProductCardProps {
   product: Product;
@@ -10,11 +11,13 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, showWishlist = true }) => {
-  const [isWishlisted, setIsWishlisted] = React.useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(Number(product.id));
 
-  const handleWishlistToggle = (e: React.MouseEvent) => {
+  const handleWishlistToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsWishlisted(!isWishlisted);
+    e.stopPropagation();
+    await toggleWishlist(Number(product.id));
   };
 
   // Get the first image or use placeholder

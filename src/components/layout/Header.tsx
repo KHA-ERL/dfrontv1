@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
 import {
   User,
   LogOut,
@@ -15,20 +17,19 @@ import {
   Package,
   LayoutDashboard,
   ListOrdered,
-  Users,
-  Settings
+  Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartCount] = useState(0);
-  const [wishlistCount] = useState(0);
 
   const handleLogout = () => {
     logout();

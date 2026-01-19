@@ -6,23 +6,32 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { formatCurrency } from '../../utils/validation';
 import type { Product } from '../../types';
 import { Button } from '../../components/ui/Button';
-import { X, Star } from 'lucide-react';
+import { X, Star, Heart, ShoppingCart, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   // Check if current user is the seller of this product
   const isOwnProduct = user && product && (
     String(product.sellerId) === String(user.id) ||
     String(product.seller?.id) === String(user.id)
   );
+
+  // Check if seller contact details are visible (after payment)
+  const sellerContactVisible = (product as any)?.sellerContactVisible === true;
+  const isWishlisted = product ? isInWishlist(Number(product.id)) : false;
 
   useEffect(() => {
     if (!id) return;
@@ -152,8 +161,43 @@ export const ProductDetail: React.FC = () => {
             {product.description}
           </div>
 
-          <div className="mt-6 space-x-2">
-            <Button onClick={() => navigate(-1)}>Back</Button>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button onClick={() => navigate(-1)} variant="outline">Back</Button>
+
+            {!isOwnProduct && (
+              <>
+                {/* Wishlist Button */}
+                <Button
+                  onClick={() => toggleWishlist(Number(product.id))}
+                  variant="outline"
+                  className={isWishlisted ? 'text-red-500 border-red-500' : ''}
+                >
+                  <Heart size={18} className={isWishlisted ? 'fill-red-500' : ''} />
+                  {isWishlisted ? 'Saved' : 'Save'}
+                </Button>
+
+                {/* Add to Cart Button */}
+                <Button
+                  onClick={async () => {
+                    if (!user) {
+                      toast.warning("Please log in to add to cart");
+                      navigate('/login', { state: { from: { pathname: `/products/${product.id}` } } });
+                      return;
+                    }
+                    setAddingToCart(true);
+                    await addToCart(Number(product.id));
+                    setAddingToCart(false);
+                  }}
+                  disabled={addingToCart}
+                  variant="outline"
+                  className="border-blue-500 text-blue-600"
+                >
+                  <ShoppingCart size={18} />
+                  {addingToCart ? 'Adding...' : 'Add to Cart'}
+                </Button>
+              </>
+            )}
+
             {isOwnProduct ? (
               <span className="inline-block px-4 py-2 bg-gray-400 text-white rounded-md cursor-not-allowed">
                 Your Product
@@ -226,14 +270,47 @@ export const ProductDetail: React.FC = () => {
             alt={product.seller?.fullName || 'Seller'}
             className="w-12 h-12 rounded-full object-cover"
           />
-          <div>
+          <div className="flex-1">
+            {/* Always visible: Name */}
             <div className="font-medium">
               {product.seller?.fullName || 'Unknown Seller'}
             </div>
-            <div className="text-sm text-gray-500">{product.seller?.email}</div>
-            {product.seller?.whatsapp && (
-              <div className="text-sm text-green-600">
-                WhatsApp: {product.seller.whatsapp}
+
+            {/* Always visible: Location */}
+            {(product.location_state || product.locationState) && (
+              <div className="text-sm text-gray-600 mt-1">
+                📍 {product.location_state || product.locationState}
+              </div>
+            )}
+
+            {/* Contact details - only visible after payment */}
+            {sellerContactVisible ? (
+              <>
+                {product.seller?.email && (
+                  <div className="text-sm text-gray-500 mt-1">
+                    ✉️ {product.seller.email}
+                  </div>
+                )}
+                {product.seller?.whatsapp && (
+                  <div className="text-sm text-green-600 mt-1">
+                    📱 WhatsApp: {product.seller.whatsapp}
+                  </div>
+                )}
+                {(product.seller as any)?.houseAddress && (
+                  <div className="text-sm text-gray-600 mt-1">
+                    🏠 {(product.seller as any).houseAddress}
+                  </div>
+                )}
+                {(product.seller as any)?.substituteAddress && (
+                  <div className="text-sm text-gray-600 mt-1">
+                    📍 Alt: {(product.seller as any).substituteAddress}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="mt-2 p-2 bg-gray-100 rounded-lg flex items-center gap-2 text-sm text-gray-600">
+                <Lock size={14} />
+                <span>Contact details visible after purchase</span>
               </div>
             )}
           </div>

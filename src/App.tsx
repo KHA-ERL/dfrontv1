@@ -4,6 +4,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -32,6 +34,8 @@ import { SellProduct } from './pages/user/SellProduct';
 import { MyListings } from './pages/user/MyListings';
 import { MySales } from './pages/user/MySales';
 import { Account } from './pages/user/Account';
+import { Cart } from './pages/user/Cart';
+import { Wishlist } from './pages/user/Wishlist';
 
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -144,6 +148,22 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <Cart />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute>
+                  <Wishlist />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin Routes */}
             <Route
@@ -213,9 +233,13 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <CartProvider>
+          <WishlistProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </WishlistProvider>
+        </CartProvider>
       </AuthProvider>
     </ErrorBoundary>
   );
