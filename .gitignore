@@ -18,6 +18,8 @@ BUGS_FOUND.md
 CHANGELOG.md
 DEBUG_INSTRUCTIONS.md
 deploy.sh
+.env
+.env.production
 
 # Editor directories and files
 .vscode/*
