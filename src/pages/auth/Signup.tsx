@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ShoppingBag } from 'lucide-react';
+import Logo from '../../components/ui/Logo';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../../components/ui/Input';
@@ -59,9 +59,8 @@ export const Signup: React.FC = () => {
         className="max-w-2xl w-full space-y-8"
       >
         <div className="text-center">
-          <Link to="/" className="flex justify-center items-center space-x-2">
-            <ShoppingBag className="h-12 w-12 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Cribhub</span>
+          <Link to="/" className="flex justify-center items-center">
+            <Logo size="lg" />
           </Link>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Create your account

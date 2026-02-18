@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import cribhubIcon from '../../assets/icon.png';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -12,7 +13,7 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <ShoppingBag className="w-8 h-8 text-orange-500" />
+              <img src={cribhubIcon} alt="Cribhub" className="w-9 h-9 rounded-md" />
               <span className="text-2xl font-bold text-white">Cribhub</span>
             </div>
             <p className="text-sm text-gray-400">
