@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ShoppingCart, Mail, Lock, ArrowRight, CheckCircle, TrendingUp, Users, Package } from 'lucide-react';
+import { Mail, Lock, ArrowRight, CheckCircle, TrendingUp, Users, Package } from 'lucide-react';
+import Logo from '../../components/ui/Logo';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../components/ui/Button';
@@ -110,9 +111,8 @@ export const Login: React.FC = () => {
         >
           {/* Logo */}
           <div className="text-center">
-            <Link to="/" className="inline-flex items-center space-x-2 group">
-              <ShoppingCart className="h-12 w-12 text-primary-600 group-hover:text-primary-700 transition-colors" />
-              <span className="text-2xl font-bold text-gray-900">Cribhub</span>
+            <Link to="/" className="inline-flex items-center group">
+              <Logo size="lg" />
             </Link>
           </div>
 

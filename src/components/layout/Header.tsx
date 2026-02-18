@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import { useWishlist } from '../../contexts/WishlistContext';
+import Logo from '../ui/Logo';
 import {
   User,
   LogOut,
@@ -121,9 +122,8 @@ export const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to={user ? "/dashboard" : "/browse"} className="flex items-center space-x-2">
-              <ShoppingCart className="h-10 w-10 text-primary-600" />
-              <span className="text-2xl font-bold text-gray-900">Cribhub</span>
+            <Link to={user ? "/dashboard" : "/browse"} className="flex items-center">
+              <Logo size="md" />
             </Link>
 
             {/* Search Bar - Desktop */}
